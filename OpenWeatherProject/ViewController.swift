@@ -7,7 +7,7 @@
 
 import CoreLocation
 import UIKit
-
+import OpenWeatherFramework
 
 import Alamofire
 import Kingfisher
@@ -49,8 +49,8 @@ class ViewController: UIViewController {
         dateFormatter.locale = Locale(identifier: "ko-KR")
         timeLabel.text = dateFormatter.string(from: currentTime)
         
+        
     }
-    
     
     func setCornerRadius() {
         temperatureLabel.layer.cornerRadius = 10
@@ -64,8 +64,6 @@ class ViewController: UIViewController {
         saySomethingLabel.clipsToBounds = true
         
     }
-
-    
     
     func showWeatherInfo() {
         OpenWeatherAPIManager.shared.requestWeatherData(type: .weather, lat: currentLatitude, lon: currentLongtitude) { json in
@@ -97,6 +95,13 @@ class ViewController: UIViewController {
             self.windStrengthLabel.text = "  \(floor(weatherInfo.windSpeed))m/s의 바람이 불어요  "
             self.iconWeatherImageView.kf.setImage(with: imageURL)
         }
+    }
+    
+    @IBAction func shareButtonClicked(_ sender: Any) {
+        showOpenWeatherAVC(shareHumid: humidityLabel.text!, shareTemp: temperatureLabel.text!, shareLocation: locationLabel.text!)
+        print(humidityLabel.text!)
+        
+        
     }
 }
 
@@ -178,15 +183,3 @@ extension ViewController: CLLocationManagerDelegate {
         checkVersionLocationServiceAuthorization()
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
