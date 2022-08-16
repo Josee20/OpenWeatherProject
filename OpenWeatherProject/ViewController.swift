@@ -75,11 +75,23 @@ class ViewController: UIViewController {
             let iconImage = json["weather"][0]["icon"].stringValue
             let location = json["name"].stringValue
             
+            let findLocation = CLLocation(latitude: self.currentLatitude, longitude: self.currentLongtitude)
+            let geocoder = CLGeocoder()
+            let locale = Locale(identifier: "Ko-kr") //원하는 언어의 나라 코드를 넣어주시면 됩니다.
+            
+            geocoder.reverseGeocodeLocation(findLocation, preferredLocale: locale, completionHandler: {(placemarks, error) in
+                if let address: [CLPlacemark] = placemarks {
+                    
+                    if let name: String = address.last?.name { print(name) } //전체 주소
+                    self.locationLabel.text = address.last?.name
+                }
+            })
+            
             let imageURL = URL(string: "\(APIKey.weatherIconKey)\(iconImage)@4x.png")
             let weatherInfo = WeatherInfoStruct(temperature: temp, humidity: humidity, windSpeed: windSpeed, iconImage: iconImage)
             self.weatherInfoList.append(weatherInfo)
             
-            self.locationLabel.text = location
+//            self.locationLabel.text = location
             self.temperatureLabel.text = "  지금은 \(floor(weatherInfo.temperature))°C에요  "
             self.humidityLabel.text = "  \(floor(weatherInfo.humidity))%만큼 습해요  "
             self.windStrengthLabel.text = "  \(floor(weatherInfo.windSpeed))m/s의 바람이 불어요  "
@@ -150,6 +162,9 @@ extension ViewController: CLLocationManagerDelegate {
         currentLatitude = locations.last!.coordinate.latitude
         currentLongtitude = locations.last!.coordinate.longitude
         
+        
+
+        
         showWeatherInfo()
         
         locationManager.stopUpdatingLocation()
@@ -163,6 +178,8 @@ extension ViewController: CLLocationManagerDelegate {
         checkVersionLocationServiceAuthorization()
     }
 }
+
+
 
 
 
